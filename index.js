@@ -1,43 +1,56 @@
-const { Client, Intents } = require('discord.js');
+const fs = require('fs');
+const { Client, Intents, Message, MessageEmbed } = require('discord.js');
 const { TOKEN } = require('./config.json');
-
-const botmarex = /botmar/;
-const dabex = /dab/;
-const prefix = /^bm\$/i;
 
 const client = new Client({ intents: [
     Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES
 ]});
+
+//load in commands
+let commands = [];
+
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+
+for(const file of commandFiles) {
+    commands.push(require(`./commands/${file}`));
+}
+
+//command line interface
+const cli = (message) => {
+    if(!/^bm\$ /.test(message.content)) return;
+
+    const args = message.content.match(/\w+/g);
+    console.log(args);
+    const name = args[1];
+
+    const params = [];
+
+    for (let i = 2; i < args.length; i++) {
+        params.push(args[i]);
+    }
+
+    const command = commands.find(({ commandName }) => commandName === name);
+
+    if(!command) {
+        message.channel.send('Botmar no understando...');
+        return false;
+    }
+
+    command.execute(message, params);
+    return true;
+}
+
+//events
 
 client.once('ready', () => {
     console.log('Ready');
 });
 
 client.on('messageCreate', message => {
-    if(message.author.bot) return;
+    if(message.author == client.user) return;
 
-    const prefixinfo = prefix.exec(message.content);
-    const botmarinfo = botmarex.exec(message.content.toLowerCase());
-    const dabinfo = dabex.exec(message.content.toLowerCase());
-
-    if(prefixinfo){
-        message.channel.send('Works');
-    } else if(botmarinfo) {
-        message.channel.send('Dum gay bitch\n*jejeje*');
-    } else if (dabinfo) {
-        message.channel.send('*dab*');
-    }
-});
-
-client.on('interactionCreate', async interaction => {
-    if(!interaction.isCommand()) return;
-
-    const { commandName } = interaction;
-
-    if(commandName === 'hello') {
-        await interaction.reply('Dum gay bitch\n*jejejeje*');
-        await interaction.deleteReply();
-    }
+    cli(message);
+    //react(message);
 });
 
 client.login(TOKEN);
