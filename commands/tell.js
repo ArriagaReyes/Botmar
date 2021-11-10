@@ -10,6 +10,12 @@ module.exports = {
         }
 
         message.delete();
-        message.channel.send(`<@${id}> ${content}`);
+
+        if(/<@!\d+>/g.test(id) || /<@\d+>/g.test(id)) {
+            message.channel.send(`${id} ${content}`);
+        }
+        else {
+            message.channel.send(`<@${id}> ${content}`);
+        }
     }
 }
