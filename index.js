@@ -1,5 +1,5 @@
 const { Client, Intents, Message, MessageEmbed } = require('discord.js');
-const { TOKEN } = require('./config.json');
+const { TOKEN } = require('./config');
 const command = require('./src/interface');
 const react = require('./src/reactions');
 
