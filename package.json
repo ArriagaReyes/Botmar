@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "start": "node index.js",
     "dev": "nodemon index.js",
     "push": "git push origin main && git push heroku main",
     "setCommands": "node deploy-commands.js"
