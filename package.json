@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "nodemon index.js",
+    "push": "git push origin main && git push heroku main",
     "setCommands": "node deploy-commands.js"
   },
   "dependencies": {
